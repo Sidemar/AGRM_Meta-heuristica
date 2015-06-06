@@ -12,6 +12,9 @@ public class Grafo {
     private ArrayList<Aresta> arestas;
     private int numVertices;
 
+    public Grafo() {
+    }
+    
     public Grafo(ArrayList<Aresta> arestas, int numVertices) {
         this.arestas = arestas;
         this.numVertices = numVertices;
