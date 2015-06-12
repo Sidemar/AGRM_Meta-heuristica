@@ -10,58 +10,39 @@ public class AGComRotulacaoMinimaVNS {
     public static void main(String[] args) throws IOException {
         ArrayList<Aresta> arvoreGeradora = new ArrayList();
         ArrayList<Cor> cores = new ArrayList();
-        ArrayList<Cor> melhorSolucao = new ArrayList();
-        
-        InOut inout = new InOut("C:\\Users\\Sidemar_user\\Documents\\NetBeansProjects\\AGRM_Meta-heuristica\\src\\Instancias\\500_124750_500.txt");
-        //long tempo = System.currentTimeMillis();
+        ArrayList<Cor> melhorSolucao = new ArrayList();  
+        InOut inout = new InOut("C:\\Users\\Sidemar_user\\Documents\\NetBeansProjects\\AGRM_Meta-heuristica\\src\\Instancias\\100_125.txt");
+        long tempo = System.currentTimeMillis();
         
         grafo.setArestas(inout.arestas);
         grafo.setNumVertices(inout.N);
-        cores = grafo.getCoresUsadas(grafo.getArestas());
+        cores = grafo.getCoresUsadas(grafo.getArestas());   
         arvoreGeradora = grafo.gerarArvore(cores);
         melhorSolucao = grafo.getCoresUsadas(arvoreGeradora);
         
-        //tempo = System.currentTimeMillis() - tempo;
-        
         if(arvoreGeradora != null) {
-            for (Aresta a : arvoreGeradora) {
-                System.out.println("v"+a.getVerticeOrigem().getNome() + "--" +a.getValor()
-                        + "--v" + a.getVerticeDestino().getNome() + "\t");
-            }
-            System.out.println();
-            System.out.println("Quantidade de cores = " + melhorSolucao.size());
-        } else
+//            for (Aresta a : arvoreGeradora) {
+//                System.out.println("v"+a.getVerticeOrigem().getNome() + "--" +a.getValor()
+//                        + "--v" + a.getVerticeDestino().getNome() + "\t");
+//            }
+//            System.out.println();
+            //System.out.println("Quantidade de cores = " + melhorSolucao.size());
+        } else {
             System.out.println("Nao gera uma arvore");
-        
-        //System.out.println("\nTempo Total: " + tempo + " milissegundos");
-        
+            return;
+        }
+            
         ArrayList<Cor> novaSolucao = new ArrayList();
         for (Cor s : melhorSolucao) {
             novaSolucao.add(0, s);
         }
         
-        long tempo = System.currentTimeMillis();
-        
-        // Iniciando a meta-heuristica
+        // Iniciando a meta-heuristica deste ponto
         for (int k = 0; k < melhorSolucao.size(); ) {
-            novaSolucao = agitacao(novaSolucao, cores, k);
-            
-            System.out.println("Antes da busca local");
-            for (Cor c : novaSolucao) {
-                System.out.println(c.getCor());
-            }
-            
+            novaSolucao = mudarVizinhanca(novaSolucao, cores, k);
             novaSolucao = buscaLocal(novaSolucao);
-            
-            System.out.println("Depois da busca local");
-            for (Cor c : novaSolucao) {
-                System.out.println(c.getCor());
-            }
-            
-            System.out.println("Tamanho da nova = " +novaSolucao.size());
-            System.out.println("Tamanho da velha = " +melhorSolucao.size());
+
             if(novaSolucao.size() < melhorSolucao.size()) {
-                System.out.println("Achou melhor");
                 melhorSolucao.clear();
                 for (Cor s : novaSolucao) {
                     melhorSolucao.add(0, s);
@@ -76,23 +57,19 @@ public class AGComRotulacaoMinimaVNS {
         System.out.println("Quantidade de cores finais = " + melhorSolucao.size());
     }
     
-    
-    
-    public static ArrayList<Cor> agitacao(ArrayList<Cor> coresUsadas, ArrayList<Cor> coresTotal, int k) {
+    public static ArrayList<Cor> mudarVizinhanca(ArrayList<Cor> coresUsadas, ArrayList<Cor> coresTotal, int k) {
         Random aleatorio = new Random();
-        int numero = aleatorio.nextInt(3);
-        //int numero = 0;
-        System.out.println("Numero = " + numero);
+        int numero;
         int valor;
         boolean continuar;
         Cor cor;
         
         for (int i = 0; i <= k; i++) {
+            numero = aleatorio.nextInt(3);
             if(numero == 0) {
                 // troca uma cor
                 valor = aleatorio.nextInt(coresUsadas.size());
                 cor = coresUsadas.get(valor);
-                System.out.println("Cor deletada = " + cor.getCor());
                 if(coresUsadas.size() > 0) {
                     coresUsadas.remove(valor);
                 }
@@ -111,7 +88,6 @@ public class AGComRotulacaoMinimaVNS {
 
                     if(!continuar) {
                         coresUsadas.add(0, coresTotal.get(valor));
-                        System.out.println("Cor adicionada = " + coresTotal.get(valor).getCor());
                         break;
                     }
                 }
@@ -169,7 +145,6 @@ public class AGComRotulacaoMinimaVNS {
                     }
 
                     if(!continuar) {
-                        //System.out.println("Adicionou: "+coresTotal.get(valor).getCor());
                         coresUsadas.add(0, coresTotal.get(valor));
                         break;
                     }
